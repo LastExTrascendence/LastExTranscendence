@@ -5,16 +5,17 @@ services:
     build: ./frontend/
     container_name: frontend
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
+      # backend:
+      #   condition: service_healthy
     env_file:
       - ./frontend/.env
     # network 설정에 따라 삭제 가능
     expose:
-      - "8080"
+      - "3333"
     healthcheck:
       interval: 5s
-      test: ["CMD-SHELL", "curl -k https://localhost:8080 || exit 1"]
+      test: ["CMD-SHELL", "wget -O - https://localhost:3333 || exit 1"]
       timeout: 3s
       retries: 3
     image: frontend:LastExTranscendence
@@ -22,14 +23,14 @@ services:
     networks:
       - transcendence
     ports:
-      - 8080:8080
+      - 3333:3333
     restart: on-failure
     volumes:
-      - frontend:/app
+      - ./frontend/frontend:/app
 
   backend:
     build: ./backend/
-    container_name: frontend
+    container_name: backend
     depends_on:
       postgresql:
         condition: service_healthy
@@ -40,7 +41,7 @@ services:
       - "3000"
     healthcheck:
       interval: 5s
-      test: ["CMD-SHELL", "curl -k https://localhost:3000 || exit 1"]
+      test: ["CMD-SHELL", "wget -O - https://localhost:3000 || exit 1"]
       timeout: 3s
       retries: 3
     image: backend:LastExTranscendence
@@ -51,18 +52,29 @@ services:
       - 3000:3000
     restart: on-failure
     volumes:
-      - backend:/app
+      - ./backend:/app
 
   postgresql:
     container_name: postgresql
+    command: postgres -c 'hba_file=/var/lib/postgresql/pg_hba.conf'
     env_file:
       - ./postgresql.env
+    environment:
+      - PGUSER=postgres
     # network 설정에 따라 삭제 가능
     expose:
       - "5432"
     healthcheck:
       interval: 5s
-      test: ["CMD-SHELL", "pg_isready -d db_local || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready",
+          "-d",
+          "$${POSTGRES_DB}",
+          "-U",
+          "$${POSTGRES_USER}",
+        ]
       timeout: 3s
       retries: 3
     image: postgres:16-alpine3.18
@@ -95,13 +107,14 @@ services:
       - transcendence
     ports:
       - 5050:80
-    restart: on-failrue
+    restart: on-failure
     volumes:
       - ./pgadmin_servers.json:/pgadmin4/servers.json
 
 networks:
   transcendence:
     name: transcendence
+    driver: bridge
 
 volumes:
   frontend:
