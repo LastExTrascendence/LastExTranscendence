@@ -59,8 +59,6 @@ services:
     command: postgres -c 'hba_file=/var/lib/postgresql/pg_hba.conf'
     env_file:
       - ./postgresql.env
-    environment:
-      - PGUSER=postgres
     # network 설정에 따라 삭제 가능
     expose:
       - "5432"
