@@ -75,7 +75,29 @@ services:
       - postgresql:/var/lib/postgresql/data
       - ./pg_hba.conf:/var/lib/postgresql/pg_hba.conf
 
-  # pgadmin:
+  pgadmin:
+    container_name: pgadmin
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    env_file:
+      - ./pgadmin.env
+    # network 설정에 따라 삭제 가능
+    expose:
+      - 5050
+    # healthcheck:
+    #   interval: 5s
+    #   test: ["CMD-SHELL", "wget -O - http://localhost:80/misc/ping || exit 1"]
+    #   timeout: 3s
+    #   retries: 3
+    image: dpage/pgadmin4:8.0
+    networks:
+      - transcendence
+    ports:
+      - 5050:80
+    restart: on-failrue
+    volumes:
+      - ./pgadmin_servers.json:/pgadmin4/servers.json
 
 networks:
   transcendence:
