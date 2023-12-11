@@ -4,10 +4,10 @@
       "Name": "ft_transcendence",
       "Group": "Servers",
       "Port": 5432,
-      "Username": "transcendence",
+      "Username": "postgres",
       "SSLMode": "prefer",
-      "MaintenanceDB": "db_local",
-      "Host": "postgres"
+      "MaintenanceDB": "trans_backend",
+      "Host": "postgresql"
     }
   }
 }
