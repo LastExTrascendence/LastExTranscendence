@@ -9,7 +9,7 @@ services:
       # backend:
       #   condition: service_healthy
     env_file:
-      - ./frontend/.env
+      - ./frontend/frontend/.env
     # network 설정에 따라 삭제 가능
     expose:
       - "3333"
@@ -34,8 +34,8 @@ services:
     depends_on:
       postgresql:
         condition: service_healthy
-    env_file:
-      - ./backend/.env
+    # env_file:
+    #   - ./backend/.env
     # network 설정에 따라 삭제 가능
     expose:
       - "3000"
