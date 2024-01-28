@@ -111,6 +111,25 @@ services:
     volumes:
       - ./pgadmin_servers.json:/pgadmin4/servers.json
 
+  redis:
+    build: ./redis
+    container_name: redis
+    expose:
+      - "6379"
+    healthcheck:
+      interval: 5s
+      test: ["CMD-SHELL", "redis-cli -h localhost -p 6379 ping || exit 1"]
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    image: redis:LastExTranscendence
+    init: true
+    networks:
+      - transcendence
+    restart: on-failure:3
+    ports:
+      - 6379:6379
+
 networks:
   transcendence:
     name: transcendence
@@ -123,7 +142,7 @@ volumes:
     driver_opts:
       o: "bind"
       type: "none"
-      device: ./frontend
+      device: /Users/jusohn/goinfre/transcendence/frontend
 
   backend:
     name: backend
@@ -131,7 +150,7 @@ volumes:
     driver_opts:
       o: "bind"
       type: "none"
-      device: ./backend
+      device: /Users/jusohn/goinfre/transcendence/backend
 
   postgresql:
     name: postgresql
@@ -139,4 +158,4 @@ volumes:
     driver_opts:
       o: "bind"
       type: "none"
-      device: ./data
+      device: /Users/jusohn/data
