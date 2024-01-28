@@ -5,9 +5,9 @@ services:
     build: ./frontend/
     container_name: frontend
     depends_on:
-      - backend
+    - backend
       # backend:
-      #   condition: service_healthy
+        # condition: service_healthy
     env_file:
       - ./frontend/frontend/.env
     # network 설정에 따라 삭제 가능
@@ -39,11 +39,12 @@ services:
     # network 설정에 따라 삭제 가능
     expose:
       - "3000"
+      # - "6379"
     healthcheck:
       interval: 5s
       test: ["CMD-SHELL", "wget -O - https://localhost:3000 || exit 1"]
-      timeout: 3s
-      retries: 3
+      timeout: 8s
+      retries: 15
     image: backend:LastExTranscendence
     init: true
     networks:
@@ -111,24 +112,24 @@ services:
     volumes:
       - ./pgadmin_servers.json:/pgadmin4/servers.json
 
-  redis:
-    build: ./redis
-    container_name: redis
-    expose:
-      - "6379"
-    healthcheck:
-      interval: 5s
-      test: ["CMD-SHELL", "redis-cli -h localhost -p 6379 ping || exit 1"]
-      timeout: 3s
-      retries: 3
-      start_period: 5s
-    image: redis:LastExTranscendence
-    init: true
-    networks:
-      - transcendence
-    restart: on-failure:3
-    ports:
-      - 6379:6379
+  # redis:
+  #   build: ./redis
+  #   container_name: redis
+  #   expose:
+  #     - "6379"
+  #   healthcheck:
+  #     interval: 5s
+  #     test: ["CMD-SHELL", "redis-cli -h localhost -p 6379 ping || exit 1"]
+  #     timeout: 3s
+  #     retries: 3
+  #     start_period: 5s
+  #   image: redis:LastExTranscendence
+  #   # init: true
+  #   networks:
+  #     - transcendence
+  #   restart: on-failure:3
+  #   ports:
+  #     - 6379:6379
 
 networks:
   transcendence:
