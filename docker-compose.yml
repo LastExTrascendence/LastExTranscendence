@@ -5,14 +5,17 @@ services:
     build: ./frontend/
     container_name: frontend
     depends_on:
-    - backend
-      # backend:
+      - backend
+        # backend:
         # condition: service_healthy
     env_file:
       - ./frontend/frontend/.env
     # network 설정에 따라 삭제 가능
     expose:
       - "3333"
+      - "81"
+      - "83"
+      - "85"
     healthcheck:
       interval: 5s
       test: ["CMD-SHELL", "wget -O - https://localhost:3333 || exit 1"]
@@ -39,6 +42,9 @@ services:
     # network 설정에 따라 삭제 가능
     expose:
       - "3000"
+      - "81"
+      - "83"
+      - "85"
       # - "6379"
     healthcheck:
       interval: 5s
@@ -51,6 +57,9 @@ services:
       - transcendence
     ports:
       - 3000:3000
+      - 81:81
+      - 83:83
+      - 85:85
     restart: on-failure
     volumes:
       - ./backend:/app
@@ -112,6 +121,18 @@ services:
     volumes:
       - ./pgadmin_servers.json:/pgadmin4/servers.json
 
+  redis:
+    image: redis:7
+    container_name: redis
+    networks:
+      - transcendence
+    volumes:
+      - redis-volume:/data
+    # ports:
+    #   - 6379:6379
+    # expose:
+    #   - "6379"
+
   # redis:
   #   build: ./redis
   #   container_name: redis
@@ -124,7 +145,7 @@ services:
   #     retries: 3
   #     start_period: 5s
   #   image: redis:LastExTranscendence
-  #   # init: true
+  #   init: true
   #   networks:
   #     - transcendence
   #   restart: on-failure:3
@@ -143,7 +164,7 @@ volumes:
     driver_opts:
       o: "bind"
       type: "none"
-      device: /Users/jusohn/goinfre/transcendence/frontend
+      device: ./frontend
 
   backend:
     name: backend
@@ -151,7 +172,7 @@ volumes:
     driver_opts:
       o: "bind"
       type: "none"
-      device: /Users/jusohn/goinfre/transcendence/backend
+      device: ./backend
 
   postgresql:
     name: postgresql
@@ -159,4 +180,12 @@ volumes:
     driver_opts:
       o: "bind"
       type: "none"
-      device: /Users/jusohn/data
+      device: ./data
+
+  redis-volume:
+    name: redis-volume
+    driver: local
+    driver_opts:
+      o: "bind"
+      type: "none"
+      device: ./redis/data
