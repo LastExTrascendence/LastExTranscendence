@@ -126,31 +126,6 @@ services:
     container_name: redis
     networks:
       - transcendence
-    volumes:
-      - redis-volume:/data
-    # ports:
-    #   - 6379:6379
-    # expose:
-    #   - "6379"
-
-  # redis:
-  #   build: ./redis
-  #   container_name: redis
-  #   expose:
-  #     - "6379"
-  #   healthcheck:
-  #     interval: 5s
-  #     test: ["CMD-SHELL", "redis-cli -h localhost -p 6379 ping || exit 1"]
-  #     timeout: 3s
-  #     retries: 3
-  #     start_period: 5s
-  #   image: redis:LastExTranscendence
-  #   init: true
-  #   networks:
-  #     - transcendence
-  #   restart: on-failure:3
-  #   ports:
-  #     - 6379:6379
 
 networks:
   transcendence:
@@ -158,34 +133,11 @@ networks:
     driver: bridge
 
 volumes:
-  frontend:
-    name: frontend
-    driver: local
-    driver_opts:
-      o: "bind"
-      type: "none"
-      device: ./frontend
-
-  backend:
-    name: backend
-    driver: local
-    driver_opts:
-      o: "bind"
-      type: "none"
-      device: ./backend
-
   postgresql:
     name: postgresql
     driver: local
     driver_opts:
       o: "bind"
       type: "none"
-      device: ./data
+      device: /Users/jusohn/data
 
-  redis-volume:
-    name: redis-volume
-    driver: local
-    driver_opts:
-      o: "bind"
-      type: "none"
-      device: ./redis/data
